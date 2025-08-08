@@ -11,8 +11,8 @@ labels = ["A", "B", "C", "Hello", "No", "Yes"]
 
 # === Streamlit App ===
 st.set_page_config(page_title="Sign Language Recognition", layout="centered")
-st.title("🤟 Real-Time Sign Language Detection")
-st.markdown("Using webcam + CNN model + cvzone HandTrackingModule")
+st.title("Real-Time Sign Language Detection")
+st.markdown("Converting Sign Language to Text")
 
 run = st.checkbox('Start Webcam')
 FRAME_WINDOW = st.image([])
@@ -86,3 +86,4 @@ while run:
 
 cap.release()
 cv2.destroyAllWindows()
+
