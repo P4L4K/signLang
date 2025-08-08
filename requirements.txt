@@ -1,6 +1,6 @@
 opencv-python
-mediapipe==0.10.0
-tensorflow==2.13.0
+mediapipe
+tensorflow
 streamlit
 cvzone
 numpy
