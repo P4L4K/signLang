@@ -1,5 +1,5 @@
-opencv-python
-mediapipe
-tensorflow
-streamlit
-cvzone
+opencv-python-headless==4.5.5.64
+mediapipe==0.10.9
+tensorflow==2.11.0
+streamlit==1.25.0
+cvzone==1.5.6
