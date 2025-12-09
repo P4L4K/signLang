@@ -13,7 +13,7 @@ labels = ["A", "B", "C"]
 
 # === Streamlit App ===
 st.set_page_config(page_title="Sign Language Recognition", layout="centered")
-st.title("Real-Time Sign Language Detection")
+st.title("Sign Language Detection")
 st.markdown("Converting Sign Language to Text")
 
 # === Webcam checkbox ===
@@ -108,3 +108,4 @@ else:
             img = cv2.imread(tmp_file.name)
             process_frame(img)
             os.unlink(tmp_file.name)
+
