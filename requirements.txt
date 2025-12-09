@@ -4,3 +4,4 @@ streamlit
 cvzone==1.5.6
 mediapipe==0.10.8
 numpy
+streamlit-webrtc
