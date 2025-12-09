@@ -8,7 +8,7 @@ from streamlit_webrtc import webrtc_streamer, VideoProcessorBase
 import av
 
 # LOAD MODEL & LABELS
-model = load_model("keras_model.h5")
+model = load_model("keras_model.h5", compile=False)
 labels = ["A", "B", "C"]
 
 detector = HandDetector(maxHands=1)
@@ -86,3 +86,4 @@ webrtc_streamer(
     media_stream_constraints={"video": True, "audio": False},
     async_processing=True,
 )
+
