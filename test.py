@@ -2,12 +2,15 @@ import streamlit as st
 import cv2
 import numpy as np
 import math
+import av
 from cvzone.HandTrackingModule import HandDetector
 from tensorflow.keras.models import load_model
 from streamlit_webrtc import webrtc_streamer, VideoProcessorBase
-import av
 
-# LOAD MODEL & LABELS
+
+# ===============================
+# ✅ LOAD MODEL SAFELY FOR CLOUD
+# ===============================
 model = load_model("keras_model.h5", compile=False)
 labels = ["A", "B", "C"]
 
@@ -15,14 +18,20 @@ detector = HandDetector(maxHands=1)
 offset = 20
 imgSize = 300
 
-# STREAMLIT UI
-st.set_page_config(page_title="Real-Time Sign Detection", layout="centered")
-st.title(" Real-Time Sign Language Detection")
-st.markdown("Live camera-based sign recognition using Deep Learning")
+
+# ===============================
+# ✅ STREAMLIT UI
+# ===============================
+st.set_page_config(page_title="Sign Language Detection", layout="centered")
+st.title("🖐 Real-Time Sign Language Detection")
+st.markdown("Live webcam sign recognition using Deep Learning")
 
 prediction_box = st.empty()
 
-# REAL-TIME VIDEO PROCESSOR
+
+# ===============================
+# ✅ VIDEO PROCESSOR (YOUR LOGIC)
+# ===============================
 class SignProcessor(VideoProcessorBase):
     def recv(self, frame):
         img = frame.to_ndarray(format="bgr24")
@@ -33,12 +42,13 @@ class SignProcessor(VideoProcessorBase):
 
         if hands:
             hand = hands[0]
-            x, y, w, h = hand['bbox']
+            x, y, w, h = hand["bbox"]
 
             imgWhite = np.ones((imgSize, imgSize, 3), np.uint8) * 255
 
             try:
-                imgCrop = img[y - offset:y + h + offset, x - offset:x + w + offset]
+                imgCrop = img[y - offset:y + h + offset,
+                              x - offset:x + w + offset]
 
                 aspectRatio = h / w
 
@@ -47,14 +57,15 @@ class SignProcessor(VideoProcessorBase):
                     wCal = math.ceil(k * w)
                     imgResize = cv2.resize(imgCrop, (wCal, imgSize))
                     wGap = math.ceil((imgSize - wCal) / 2)
-                    imgWhite[:, wGap:wGap + wCal] = imgResize
+                    imgWhite[:, wGap:wCal + wGap] = imgResize
                 else:
                     k = imgSize / w
                     hCal = math.ceil(k * h)
                     imgResize = cv2.resize(imgCrop, (imgSize, hCal))
                     hGap = math.ceil((imgSize - hCal) / 2)
-                    imgWhite[hGap:hGap + hCal, :] = imgResize
+                    imgWhite[hGap:hCal + hGap, :] = imgResize
 
+                # ✅ MODEL INPUT
                 imgModelInput = cv2.resize(imgWhite, (64, 64))
                 imgModelInput = imgModelInput / 255.0
                 imgModelInput = np.expand_dims(imgModelInput, axis=0)
@@ -63,8 +74,9 @@ class SignProcessor(VideoProcessorBase):
                 index = np.argmax(prediction)
                 label = labels[index]
 
-                prediction_box.success(f"Detected Sign: {label}")
+                prediction_box.success(f"✅ Detected Sign: {label}")
 
+                # ✅ DRAW RESULTS
                 cv2.rectangle(imgOutput, (x - offset, y - offset - 50),
                               (x - offset + 120, y - offset), (255, 0, 255), cv2.FILLED)
 
@@ -79,11 +91,13 @@ class SignProcessor(VideoProcessorBase):
 
         return av.VideoFrame.from_ndarray(imgOutput, format="bgr24")
 
-#START REAL-TIME CAMERA STREAM
+
+# ===============================
+# ✅ START REAL-TIME STREAM
+# ===============================
 webrtc_streamer(
     key="sign-realtime",
     video_processor_factory=SignProcessor,
     media_stream_constraints={"video": True, "audio": False},
     async_processing=True,
 )
-
